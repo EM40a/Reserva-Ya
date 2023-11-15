@@ -1,14 +1,15 @@
 ﻿using Entidades.BaseDeDatos;
 using Entidades.Modelos;
 using Entidades.Excepciones;
-using Microsoft.Data.SqlClient;
-using System.Windows.Forms;
 using static FrmView.MessageBoxHelper;
 using static Entidades.Modelos.Reserva;
-using System.ComponentModel;
 
 namespace FrmView
 {
+    /// <summary>
+    /// Formulario que permite registrar una <see cref="Reserva"/> en la base de datos
+    /// con el manejador de contexto <see cref="HotelContext"/>
+    /// </summary>
     public partial class FrmRegistroReservas : Form
     {
         private HotelContext gdb;
@@ -46,45 +47,51 @@ namespace FrmView
         /// <summary>
         /// Guarda la reserva en la base de datos
         /// </summary>
+        /// <exception cref="DatoInvalidoException"></exception>
+        /// <exception cref="RegistroInvalidoException"></exception>
         private void btnSiguiente_Click(object sender, EventArgs e)
         {
-            MostrarMensaje delegado = new(MensajeNormal);
-
             try
             {
+                // Genera la reserva y la agrega a la db
                 Reserva reserva = GenerarReserva();
                 gdb.AgregarRegistro(reserva);
 
-                delegado(reserva.ToString());
+                // Muestra la reserva 
+                new DAlertar(MensajeNormal)("Reserva generada exitosamente");
 
-                FrmRegistroUsuario frmRegistroUsuario = new(reserva); 
+                // Abre el formulario de registro de huesped
+                FrmRegistroUsuario frmRegistroUsuario = new(reserva);
                 frmRegistroUsuario.Show();
                 Hide();
             }
             catch (Exception except)
             {
-                delegado = new(MensajeError);
-                delegado(except.Message);
+                new DAlertar(MensajeError)(except.Message);
             }
         }
         #endregion
 
         #region Metodos
         /// <summary>
-        /// Genera una reserva con los datos ingresados
+        /// Genera una <see cref="Reserva"/> con los datos ingresados en el formulario
         /// </summary>
+        /// <exception cref="DatoInvalidoException"></exception>
         private Reserva GenerarReserva()
         {
             try
             {
-                Reserva reserva = new()
+                return new Reserva()
                 {
-                    FechaEntrada = dtpCheckIn.Value.ToString(),
-                    FechaSalida = dtpCheckOut.Value.ToString(),
+                    FechaEntrada = dtpCheckIn.Value,
+                    FechaSalida = dtpCheckOut.Value,
                     FormaDePago = cmbFormaPago.SelectedItem.ToString(),
-                    Valor = CalcularValor(dtpCheckIn.Value, dtpCheckOut.Value, (EFormaDePago) cmbFormaPago.SelectedItem)
+                    Valor = CalcularValor(
+                        dtpCheckIn.Value,
+                        dtpCheckOut.Value,
+                        (EFormaDePago) cmbFormaPago.SelectedItem
+                        )
                 };
-                return reserva;
             }
             catch (DatoInvalidoException)
             {
@@ -93,7 +100,7 @@ namespace FrmView
         }
 
         /// <summary>
-        /// Calcula el valor de la reservas segun los dias de estadia y la forma de pago
+        /// Calcula el valor de la <see cref="Reserva"/> segun los dias de estadia y la <see cref="EFormaDePago"/>
         /// </summary>
         private int CalcularValor(DateTime fechaEntrada, DateTime fechaSalida, EFormaDePago formaDePago)
         {
@@ -106,8 +113,9 @@ namespace FrmView
                 fechaEntrada = fechaEntrada.AddDays(1);
             }
 
-            valor = dias * 50;
-            valor += valor * (int)formaDePago / 100;
+            // 50 USD por dia
+            valor = dias * 50; 
+            valor += valor * (int) formaDePago / 100;
 
             if (valor > 0)
             {
@@ -117,16 +125,13 @@ namespace FrmView
         }
 
         /// <summary>
-        /// Controla que las fechas sean validas
+        /// Controla los limites de los <see cref="DateTimePicker"/> para que 
+        /// las fechas de entrada y salida sean validas
         /// </summary>
         private void ControlarFechas()
         {
-            dtpCheckIn.Value = DateTime.Today;
-            dtpCheckOut.Value = DateTime.Today.AddDays(1);
-
             dtpCheckIn.MinDate = DateTime.Today;
             dtpCheckOut.MinDate = DateTime.Today.AddDays(1);
-
             dtpCheckIn.MaxDate = DateTime.Today.AddYears(1);
         }
         #endregion

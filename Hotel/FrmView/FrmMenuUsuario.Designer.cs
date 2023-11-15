@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMenuUsuario));
             pnlContainer = new Panel();
             pnlMenu = new Panel();
-            lblReloj = new Label();
             lblText = new Label();
             lblHero = new Label();
             lblBienvenido = new Label();
@@ -56,7 +55,6 @@
             // pnlMenu
             // 
             pnlMenu.BackColor = SystemColors.Control;
-            pnlMenu.Controls.Add(lblReloj);
             pnlMenu.Controls.Add(lblText);
             pnlMenu.Controls.Add(lblHero);
             pnlMenu.Controls.Add(lblBienvenido);
@@ -66,23 +64,12 @@
             pnlMenu.Size = new Size(962, 785);
             pnlMenu.TabIndex = 3;
             // 
-            // lblReloj
-            // 
-            lblReloj.AutoSize = true;
-            lblReloj.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            lblReloj.ForeColor = Color.FromArgb(16, 35, 33);
-            lblReloj.ImeMode = ImeMode.NoControl;
-            lblReloj.Location = new Point(834, 748);
-            lblReloj.Name = "lblReloj";
-            lblReloj.Size = new Size(116, 28);
-            lblReloj.TabIndex = 8;
-            lblReloj.Text = "08/11/2023";
-            // 
             // lblText
             // 
             lblText.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            lblText.ForeColor = Color.FromArgb(19, 27, 35);
             lblText.ImeMode = ImeMode.NoControl;
-            lblText.Location = new Point(3, 329);
+            lblText.Location = new Point(3, 351);
             lblText.Name = "lblText";
             lblText.Padding = new Padding(32, 0, 32, 0);
             lblText.Size = new Size(961, 338);
@@ -91,23 +78,23 @@
             // 
             // lblHero
             // 
-            lblHero.Font = new Font("Segoe UI", 34F, FontStyle.Bold, GraphicsUnit.Point);
-            lblHero.ForeColor = Color.FromArgb(16, 35, 33);
+            lblHero.Font = new Font("Segoe UI", 32F, FontStyle.Bold, GraphicsUnit.Point);
+            lblHero.ForeColor = Color.FromArgb(19, 27, 35);
             lblHero.ImeMode = ImeMode.NoControl;
             lblHero.Location = new Point(3, 1);
             lblHero.Name = "lblHero";
             lblHero.Size = new Size(964, 260);
             lblHero.TabIndex = 5;
-            lblHero.Text = "Sistema de Reservas";
+            lblHero.Text = "SISTEMA DE RESERVAS";
             lblHero.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblBienvenido
             // 
             lblBienvenido.AutoSize = true;
             lblBienvenido.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            lblBienvenido.ForeColor = Color.FromArgb(16, 35, 33);
+            lblBienvenido.ForeColor = Color.FromArgb(19, 27, 35);
             lblBienvenido.ImeMode = ImeMode.NoControl;
-            lblBienvenido.Location = new Point(34, 278);
+            lblBienvenido.Location = new Point(34, 281);
             lblBienvenido.Name = "lblBienvenido";
             lblBienvenido.Size = new Size(176, 41);
             lblBienvenido.TabIndex = 6;
@@ -136,9 +123,11 @@
             btnBusqueda.ImeMode = ImeMode.NoControl;
             btnBusqueda.Location = new Point(0, 340);
             btnBusqueda.Name = "btnBusqueda";
+            btnBusqueda.Padding = new Padding(18, 0, 0, 0);
             btnBusqueda.Size = new Size(298, 68);
             btnBusqueda.TabIndex = 4;
             btnBusqueda.Text = "Busqueda";
+            btnBusqueda.TextAlign = ContentAlignment.MiddleLeft;
             btnBusqueda.UseVisualStyleBackColor = true;
             btnBusqueda.Click += btnBusqueda_Click;
             // 
@@ -154,9 +143,11 @@
             btnRegistro.ImeMode = ImeMode.NoControl;
             btnRegistro.Location = new Point(0, 278);
             btnRegistro.Name = "btnRegistro";
+            btnRegistro.Padding = new Padding(18, 0, 0, 0);
             btnRegistro.Size = new Size(298, 68);
             btnRegistro.TabIndex = 3;
             btnRegistro.Text = "Registro de reservas";
+            btnRegistro.TextAlign = ContentAlignment.MiddleLeft;
             btnRegistro.UseVisualStyleBackColor = true;
             btnRegistro.Click += btnRegistro_Click;
             // 
@@ -172,7 +163,6 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Menu de Usuario";
             FormClosing += FrmMenuUsuario_FormClosing;
-            Load += FrmMenuUsuario_Load;
             pnlContainer.ResumeLayout(false);
             pnlMenu.ResumeLayout(false);
             pnlMenu.PerformLayout();
@@ -189,6 +179,5 @@
         private Panel pnlAside;
         private Button btnBusqueda;
         private Button btnRegistro;
-        private Label lblReloj;
     }
 }

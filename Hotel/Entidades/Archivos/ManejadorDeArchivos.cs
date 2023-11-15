@@ -4,55 +4,58 @@ using System.Xml.Serialization;
 
 namespace Entidades.Archivos
 {
+    
     /// <summary>
     /// Clase que se encarga de guardar y leer archivos
     /// </summary>
+    /// <typeparam name="T">Tipo de dato a guardar</typeparam>
     public class ManejadorDeArchivos<T> 
         where T : class, new()
     {
-        private static string directorio;
-
-        static ManejadorDeArchivos()
-        {
-            // Establece el directorio en el escritorio
-            directorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Hotel\\";
-            ValidarExistenciaDirectorio();
-        }
-
         /// <summary>
-        /// Valida que exista el directorio, si no existe lo crea
+        /// Guarda un archivo en el directorio del proyecto
         /// </summary>
-        private static void ValidarExistenciaDirectorio()
+        /// <param name="nombreArchivo">Es el nombre del archivo a guardar</param>
+        /// <param name="elementos">El objeto a serializar</param>
+        /// <exception cref="ArchivoInvalidoException"></exception>
+        public void ExportarArchivo(string path, List<T> elementos)
         {
-            if (!Directory.Exists(directorio))
+            // Verifica la extension del archivo
+            string extension = Path.GetExtension(path.TrimStart('.'));
+
+            switch (extension.TrimStart('.').ToLower())
             {
-                try
-                {
-                    Directory.CreateDirectory(directorio);
-                }
-                catch (IOException)
-                {
-                    throw new ArchivoInvalidoException("Error al crear el directorio");
-                }
+                case "json":
+                    SerializarJson(path, elementos);
+                    break;
+
+                case "xml":
+                    SerializarXml(path, elementos);
+                    break;
+
+                default:
+                    throw new ArchivoInvalidoException("Extensión no permitida");
             }
         }
 
         /// <summary>
-        /// Guarda un archivo en el directorio del proyecto
+        /// Importa un archivo desde el directorio recibido por parametro segun la extencion del archivo (JSON o XML)/>
         /// </summary>
-        public void GuardarArchivo(string nombreArchivo, T elemento)
+        /// <typeparam name="T"></typeparam>
+        /// <param name="path"></param>
+        /// <returns>Una <see cref="List{T}"/> con los elementos deserializados</returns>
+        /// <exception cref="ArchivoInvalidoException"></exception>
+        public List<T>? ImportarArchivo<T>(string path)
         {
-            string extension = Path.GetExtension(nombreArchivo).TrimStart('.');
+            string extension = Path.GetExtension(path.TrimStart('.'));
 
-            switch (extension.ToLower())
+            switch(extension.TrimStart('.').ToLower())
             {
                 case "json":
-                    SerializarJson(nombreArchivo, elemento);
-                    break;
+                    return DeserializarJson<T>(path);
 
                 case "xml":
-                    SerializarXml(nombreArchivo, elemento);
-                    break;
+                    return DeserializarXml<T>(path);
 
                 default:
                     throw new ArchivoInvalidoException("Extensión no permitida");
@@ -62,36 +65,87 @@ namespace Entidades.Archivos
         /// <summary>
         /// Serializa un objeto a JSON
         /// </summary>
-        private void SerializarJson(string nombreArchivo, T elemento)
+        /// <param name="nombreArchivo">Es el nombre del archivo a guardar</param>
+        /// <param name="elemento">El objeto a serializar</param>
+        /// <exception cref="ArchivoInvalidoException"></exception>"
+        private void SerializarJson(string path, List<T> elemento)
         {
             try
             {
                 JsonSerializerOptions opciones = new();
                 opciones.WriteIndented = true;
-
-                using (StreamWriter writer = new(directorio + nombreArchivo))
-                {
+                
+                using (StreamWriter sw = new(path)) 
+                { 
                     string strJson = JsonSerializer.Serialize(elemento, opciones);
-                    //File.WriteAllText(directorio + nombreArchivo, strJson);
+                    sw.WriteLine(strJson);
                 }
             }
-            catch(IOException)
+            catch(JsonException)
             {
                 throw new ArchivoInvalidoException("Error al guardar el archivo JSON");
             }
         }
 
-        private void SerializarXml(string nombreArchivo, T elemento)
+        /// <summary>
+        /// Deserializa un archivo JSON con los datos del tipo de dato recibido por parametro
+        /// </summary>
+        /// <returns>Una <see cref="List{T}"/> con los elementos deserializados</returns>
+        /// <exception cref="ArchivoInvalidoException"></exception>
+        private List<T>? DeserializarJson<T>(string path)
         {
             try
             {
-                using StreamWriter writer = new(directorio + nombreArchivo);
-                XmlSerializer xmlSerializer = new(typeof(T));
-                xmlSerializer.Serialize(writer, elemento);
+                using (StreamReader reader = new(path))
+                {
+                    string strJson = reader.ReadToEnd();
+                    
+                    return JsonSerializer.Deserialize<List<T>>(strJson);
+                }
+            }
+            catch (JsonException)
+            {
+                throw new ArchivoInvalidoException("No es posible leer el archivo JSON");
+            }
+        }
+
+        /// <summary>
+        /// Serializa un objeto a XML en la ruta especificada
+        /// </summary>
+        /// <param name="nombreArchivo">Es el nombre del archivo a guardar</param>
+        /// <param name="elementos">El objeto a serializar</param>
+        /// <exception cref="ArchivoInvalidoException"></exception>
+        private void SerializarXml(string path, List<T> elementos)
+        {
+            try
+            {
+                using StreamWriter writer = new(path);
+                XmlSerializer xmlSerializer = new(typeof(List<T>));
+                xmlSerializer.Serialize(writer, elementos);
             }
             catch(IOException)
             {
                 throw new ArchivoInvalidoException("Error al guardar el archivo XML");
+            }
+        }
+
+        /// <summary>
+        /// Deserializa un archivo XML en la ruta especificada
+        /// </summary>
+        /// <exception cref="ArchivoInvalidoException"></exception>
+        private List<T>? DeserializarXml<T>(string path)
+        {
+            try
+            {
+                using (StreamReader reader = new (path)) 
+                {
+                    XmlSerializer serializer = new(typeof(T));
+                    return serializer.Deserialize(reader) as List<T>;
+                }
+            }
+            catch 
+            {
+                throw new ArchivoInvalidoException("No es posible leer el archivo XML");
             }
         }
     }

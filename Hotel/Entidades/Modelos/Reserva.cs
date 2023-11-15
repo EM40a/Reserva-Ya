@@ -1,6 +1,5 @@
 ﻿using Entidades.Excepciones;
 using System.Text;
-using static Entidades.Modelos.Reserva;
 
 namespace Entidades.Modelos
 {
@@ -11,7 +10,7 @@ namespace Entidades.Modelos
     public class Reserva
     {
         /// <summary>
-        /// Enumerado de las formas de pago admitidas
+        /// Enumerado de las formas de pago admitidas de la/s <see cref="Reserva"/>/s
         /// </summary>
         public enum EFormaDePago
         {
@@ -24,25 +23,17 @@ namespace Entidades.Modelos
         private DateTime _fechaSalida;
         private EFormaDePago _formaDePago;
 
-
-        public Reserva()
-        {
-            _fechaEntrada = DateTime.Today;
-            _fechaSalida = DateTime.Today.AddDays(1);
-            _formaDePago = EFormaDePago.Efectivo;
-        }
-
         #region Propiedades
         public int Id { get; set; }
 
-        public string FechaEntrada
+        public DateTime FechaEntrada
         {
-            get => _fechaEntrada.ToString();
+            get => _fechaEntrada;
             set => SetFechaEntrada(value);
         }
-        public string FechaSalida
+        public DateTime FechaSalida
         {
-            get => _fechaSalida.ToString();
+            get => _fechaSalida;
             set => SetFechaSalida(value);
         }
 
@@ -52,56 +43,41 @@ namespace Entidades.Modelos
             set => _formaDePago = (EFormaDePago) Enum.Parse(typeof(EFormaDePago), value);
         }
 
-        public int Valor { get; set; } = 50;
+        public int Valor { get; set; }
         #endregion
 
         #region Metodos
         /// <summary>
-        /// Verifica que la fecha de salida sea valida
+        /// Verifica que <see cref="FechaSalida"/> sea valida
         /// </summary>
-        private void SetFechaSalida(string strFechaSalida)
+        /// <exception cref="DatoInvalidoException"></exception>
+        private void SetFechaSalida(DateTime fechaSalida)
         {
-            if (!DateTime.TryParse(strFechaSalida, out DateTime fechaSalida))
+            if (fechaSalida <= _fechaEntrada)
             {
-                throw new DatoInvalidoException("La fecha no cuenta con el formato correcto");
-            }
-
-            if (fechaSalida <= DateTime.Today)
-            {
-                throw new DatoInvalidoException("La reserva debe tener al menos un dia");
-            }
-            else if (fechaSalida > _fechaEntrada.AddMonths(1))
-            {
-                throw new DatoInvalidoException("La reserva no puede ser mayor a un mes");
+                throw new DatoInvalidoException("La fecha de salida no puede ser anterior a la fecha de entrada");
             }
 
             _fechaSalida = fechaSalida;
         }
-        
+
         /// <summary>
-        /// Verifica que la fecha de entrada sea valida
+        /// Verifica que la <see cref="FechaEntrada"/> sea valida
         /// </summary>
-        public void SetFechaEntrada(string strFechaEntrada)
+        /// <exception cref="DatoInvalidoException"></exception>
+        public void SetFechaEntrada(DateTime fechaEntrada)
         {
-            if (!DateTime.TryParse(strFechaEntrada, out DateTime fechaEntrada))
+            if (fechaEntrada >= _fechaSalida)
             {
-                throw new DatoInvalidoException("La fecha no cuenta con el formato correcto");
+                throw new DatoInvalidoException("La fecha de entrada no puede ser posterior a la fecha de salida");
             }
 
-            if (fechaEntrada < DateTime.Today)
-            {
-                throw new DatoInvalidoException("La reserva debe tener al menos un dia");
-            }
-            if (fechaEntrada > DateTime.Today.AddYears(1))
-            {
-                throw new DatoInvalidoException("El plazo maximo de reserva es de un año");
-            }
             _fechaEntrada = fechaEntrada;
         }
         #endregion
 
         /// <summary>
-        /// Devuelve un string con los datos de la reserva
+        /// Devuelve un <see cref="string"/> con los datos de la reserva
         /// </summary>
         public override string ToString()
         {
@@ -117,15 +93,15 @@ namespace Entidades.Modelos
         }
 
         /// <summary>
-        /// Una reserva sera igual a un huesped si el id de la reserva coincide con el id de la reserva del huesped
+        /// Una <see cref="Reserva"/> sera igual a un <see cref="Huesped"/> si el Id de la reserva 
+        /// coincide con el Id de la reserva del huesped
         /// </summary>
-        /// <returns>True si ambos id son iguales, False si no lo son</returns>
         public static bool operator ==(Reserva r, Huesped h) => r.Id == h.IdReserva;
 
         /// <summary>
-        /// Una reserva sera distinta a un huesped si el id de la reserva no coincide con el id de la reserva del huesped
+        /// Una <see cref="Reserva"/> sera distinta a un <see cref="Huesped"/> si el Id de la reserva 
+        /// no coincide con el Id de la reserva del huesped
         /// </summary>
-        /// <returns>False si ambos id son iguales, True si no lo son</returns>
         public static bool operator !=(Reserva r, Huesped h) => !(r == h);
     }
 }

@@ -34,7 +34,7 @@ namespace FrmView
             }
             catch (DatoInvalidoException except)
             {
-                MostrarMensaje delegado = new(MensajeError);
+                DAlertar delegado = new(MensajeError);
                 delegado(except.Message);
             }
         }

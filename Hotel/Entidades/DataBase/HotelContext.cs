@@ -34,6 +34,14 @@ namespace Entidades.BaseDeDatos
             }
         }
 
+        public void AgregarRegistro<T>(List<T> registros) where T : class, new()
+        {
+            foreach (var registro in registros)
+            {
+                AgregarRegistro(registro);
+            }
+        }
+
         /// <summary>
         /// Elimina un registro de la base de datos
         /// </summary>

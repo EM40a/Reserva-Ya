@@ -127,7 +127,7 @@
             txtNombre.BackColor = SystemColors.Control;
             txtNombre.BorderStyle = BorderStyle.None;
             txtNombre.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            txtNombre.Location = new Point(78, 260);
+            txtNombre.Location = new Point(75, 260);
             txtNombre.Name = "txtNombre";
             txtNombre.Size = new Size(220, 25);
             txtNombre.TabIndex = 1;
@@ -137,7 +137,7 @@
             txtApellido.BackColor = SystemColors.Control;
             txtApellido.BorderStyle = BorderStyle.None;
             txtApellido.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            txtApellido.Location = new Point(331, 259);
+            txtApellido.Location = new Point(324, 259);
             txtApellido.Name = "txtApellido";
             txtApellido.Size = new Size(210, 25);
             txtApellido.TabIndex = 2;
@@ -296,9 +296,6 @@
         private Panel panel3;
         private Panel panel2;
         private Label lblValor;
-        private Button btnCalcularValor;
-        private ComboBox cmbFormaPago;
-        private DateTimePicker dtpChecOut;
         private Panel panel4;
         private TextBox txtTelefono;
         private Label lblTelefono;

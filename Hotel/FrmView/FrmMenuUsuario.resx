@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="lblText.Text" xml:space="preserve">
-    <value>Sistema de reserva de hotel. Controle y administre de forma óptima y fácil el flujo de reservas y de huespédes del hotel.
+    <value>Sistema de gestión de reservas hotelera. Supervise y administre eficientemente el proceso de reservas y la información de los huéspedes en el hotel.
 
-Esta herramienta le permitirá llevar un control completo y detallado de sus reservas y huéspedes, tendrá acceso a heramientas especiales para tareas específicas como lo son:
+Con esta herramienta, podrá mantener un seguimiento tanto de sus reservas y clientes, y acceder a funciones especializadas para tareas específicas, tales como:
 
-    - Registro de Reservas y Huéspedes
-    - Edición de Reservas y Huéspedes existentes
-    - Eliminar todo tipo de registros
-   </value>
+    - Registrar nuevas reservas y huéspedes.
+    - Modificar información de reservas y huéspedes ya existentes.
+    - Eliminar registros de cualquier tipo según sea necesario.
+    - Cargar y Exportar los datos en JSON o XML</value>
   </data>
 </root>

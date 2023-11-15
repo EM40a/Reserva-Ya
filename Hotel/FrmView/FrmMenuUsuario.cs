@@ -1,22 +1,14 @@
 ﻿using Entidades;
+using System.Windows.Forms;
 
 namespace FrmView
 {
     public partial class FrmMenuUsuario : Form
     {
-        private FrmRegistroReservas frmRegistroReservas;
-        private FrmBusqueda frmBusqueda;
-
         #region Form
         public FrmMenuUsuario()
         {
             InitializeComponent();
-        }
-
-        private void FrmMenuUsuario_Load(object sender, EventArgs e)
-        {
-            frmRegistroReservas = new();
-            frmBusqueda = new();
         }
 
         private void FrmMenuUsuario_FormClosing(object sender, FormClosingEventArgs e)
@@ -31,7 +23,7 @@ namespace FrmView
         /// </summary>
         private void btnRegistro_Click(object sender, EventArgs e)
         {
-            frmRegistroReservas.ShowDialog();
+            new FrmRegistroReservas().ShowDialog();
         }
 
         /// <summary>
@@ -39,7 +31,7 @@ namespace FrmView
         /// </summary>
         private void btnBusqueda_Click(object sender, EventArgs e)
         {
-            frmBusqueda.ShowDialog();
+            new FrmBusqueda().ShowDialog();
         }
         #endregion
 
@@ -50,7 +42,7 @@ namespace FrmView
         {
             while (true)
             {
-                this.ActualizarVistaReloj();
+                ActualizarVistaReloj();
                 Thread.Sleep(1000);
             }
 
@@ -72,8 +64,12 @@ namespace FrmView
             }
             else
             {
-                lblReloj.Text = DateTime.Now.ToString("HH:mm:ss");
             }
         }
+
+        private void FrmMenuUsuario_Load(object sender, EventArgs e)
+        {
+        }
+
     }
 }
