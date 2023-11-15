@@ -8,17 +8,17 @@ namespace FrmView
     /// <summary>
     /// Formulario que permite registrar un <see cref="Huesped"/> en la base de datos
     /// </summary>
-    public partial class FrmRegistroUsuario : Form
+    public partial class FrmRegistroHuesped : Form
     {
         private HotelContext gdb;
         private Reserva ReservaAsociada { get; set; }
 
         #region Form
-        public FrmRegistroUsuario()
+        public FrmRegistroHuesped()
         {
             InitializeComponent();
         }
-        public FrmRegistroUsuario(Reserva reserva) : this()
+        public FrmRegistroHuesped(Reserva reserva) : this()
         {
             ReservaAsociada = reserva;
         }
@@ -48,6 +48,7 @@ namespace FrmView
                 // Muestra el mensaje y limpiar el form
                 new DAlertar(MensajeNormal)("Registro exitoso");
                 LimpiarCampos();
+                Hide();
             }
             catch (Exception except)
             {

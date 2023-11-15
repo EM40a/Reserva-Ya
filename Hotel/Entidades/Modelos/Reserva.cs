@@ -23,6 +23,16 @@ namespace Entidades.Modelos
         private DateTime _fechaSalida;
         private EFormaDePago _formaDePago;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public Reserva()
+        {
+            _fechaEntrada = DateTime.Now;
+            _fechaSalida = _fechaEntrada.AddDays(1);
+            _formaDePago = EFormaDePago.Efectivo;
+        }
+
         #region Propiedades
         public int Id { get; set; }
 
@@ -48,20 +58,6 @@ namespace Entidades.Modelos
 
         #region Metodos
         /// <summary>
-        /// Verifica que <see cref="FechaSalida"/> sea valida
-        /// </summary>
-        /// <exception cref="DatoInvalidoException"></exception>
-        private void SetFechaSalida(DateTime fechaSalida)
-        {
-            if (fechaSalida <= _fechaEntrada)
-            {
-                throw new DatoInvalidoException("La fecha de salida no puede ser anterior a la fecha de entrada");
-            }
-
-            _fechaSalida = fechaSalida;
-        }
-
-        /// <summary>
         /// Verifica que la <see cref="FechaEntrada"/> sea valida
         /// </summary>
         /// <exception cref="DatoInvalidoException"></exception>
@@ -73,6 +69,20 @@ namespace Entidades.Modelos
             }
 
             _fechaEntrada = fechaEntrada;
+        }
+
+        /// <summary>
+        /// Verifica que <see cref="FechaSalida"/> sea valida
+        /// </summary>
+        /// <exception cref="DatoInvalidoException"></exception>
+        private void SetFechaSalida(DateTime fechaSalida)
+        {
+            if (fechaSalida <= _fechaEntrada)
+            {
+                throw new DatoInvalidoException("La fecha de salida no puede ser anterior a la fecha de entrada");
+            }
+
+            _fechaSalida = fechaSalida;
         }
         #endregion
 

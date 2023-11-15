@@ -1,6 +1,6 @@
 ﻿namespace FrmView
 {
-    partial class FrmRegistroUsuario
+    partial class FrmRegistroHuesped
     {
         /// <summary>
         /// Required designer variable.

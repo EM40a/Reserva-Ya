@@ -61,7 +61,7 @@ namespace FrmView
                 new DAlertar(MensajeNormal)("Reserva generada exitosamente");
 
                 // Abre el formulario de registro de huesped
-                FrmRegistroUsuario frmRegistroUsuario = new(reserva);
+                FrmRegistroHuesped frmRegistroUsuario = new(reserva);
                 frmRegistroUsuario.Show();
                 Hide();
             }
@@ -130,9 +130,11 @@ namespace FrmView
         /// </summary>
         private void ControlarFechas()
         {
-            dtpCheckIn.MinDate = DateTime.Today;
-            dtpCheckOut.MinDate = DateTime.Today.AddDays(1);
-            dtpCheckIn.MaxDate = DateTime.Today.AddYears(1);
+            dtpCheckIn.Value = DateTime.Now;
+            dtpCheckOut.Value = DateTime.Now;
+            dtpCheckIn.MinDate = DateTime.Now;
+            dtpCheckOut.MinDate = DateTime.Now.AddDays(1);
+            dtpCheckIn.MaxDate = DateTime.Now.AddYears(1);
         }
         #endregion
     }
