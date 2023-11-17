@@ -3,9 +3,8 @@
 namespace Entidades.Excepciones
 {
     /// <summary>
-    /// Excepción que se lanza cuando se intenta crear un objeto con un dato inválido.
+    /// Excepcion que se lanza cuando un dato es invalido o nulo
     /// </summary>
-    [Serializable]
     public class DatoInvalidoException : Exception
     {
         public DatoInvalidoException()
@@ -17,10 +16,6 @@ namespace Entidades.Excepciones
         }
 
         public DatoInvalidoException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected DatoInvalidoException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

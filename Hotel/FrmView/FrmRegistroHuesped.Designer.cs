@@ -192,7 +192,7 @@
             txtTelefono.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
             txtTelefono.Location = new Point(75, 460);
             txtTelefono.Name = "txtTelefono";
-            txtTelefono.PlaceholderText = "  2345-6789";
+            txtTelefono.PlaceholderText = "  +54 9 11 2345-6789";
             txtTelefono.Size = new Size(457, 25);
             txtTelefono.TabIndex = 4;
             // 
@@ -264,7 +264,7 @@
             label1.Text = "FECHA DE NACIMENTO";
             label1.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // FrmRegistroUsuario
+            // FrmRegistroHuesped
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -273,9 +273,10 @@
             Controls.Add(pnlAside);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
-            Name = "FrmRegistroUsuario";
+            Name = "FrmRegistroHuesped";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Registro de Usuario";
+            FormClosing += FrmRegistroHuesped_FormClosing;
             Load += FrmRegistroUsuario_Load;
             pnlAside.ResumeLayout(false);
             pnlAside.PerformLayout();

@@ -1,8 +1,9 @@
 ﻿using Entidades.BaseDeDatos;
 using Entidades.Modelos;
 using Entidades.Excepciones;
-using static FrmView.MessageBoxHelper;
+using static FrmView.ManejadorDeMensajes;
 using static Entidades.Modelos.Reserva;
+using Entidades.Eventos;
 
 namespace FrmView
 {
@@ -12,6 +13,7 @@ namespace FrmView
     /// </summary>
     public partial class FrmRegistroReservas : Form
     {
+        private ManejarExcepcion manejadorExcepciones;
         private HotelContext gdb;
 
         #region Form
@@ -23,12 +25,19 @@ namespace FrmView
         private void FrmRegistroReservas_Load(object sender, EventArgs e)
         {
             gdb = new();
+            manejadorExcepciones = new();
+            manejadorExcepciones.ExcepcionOcurre += ManejarExcepcion;
             cmbFormaPago.DataSource = Enum.GetValues(typeof(EFormaDePago));
             ControlarFechas();
         }
         #endregion
 
         #region Eventos
+        private void ManejarExcepcion(object sender, ExcepcionEventArgs e)
+        {
+            new DelegadoAlertar(MensajeError)(e.Excepcion.Message);
+        }
+
         private void dtpCheckIn_ValueChanged(object sender, EventArgs e)
         {
             CalcularValor(dtpCheckIn.Value, dtpCheckOut.Value, (EFormaDePago)cmbFormaPago.SelectedItem);
@@ -48,7 +57,7 @@ namespace FrmView
         /// Guarda la reserva en la base de datos
         /// </summary>
         /// <exception cref="DatoInvalidoException"></exception>
-        /// <exception cref="RegistroInvalidoException"></exception>
+        /// <exception cref="BaseDeDatosException"></exception>
         private void btnSiguiente_Click(object sender, EventArgs e)
         {
             try
@@ -58,16 +67,17 @@ namespace FrmView
                 gdb.AgregarRegistro(reserva);
 
                 // Muestra la reserva 
-                new DAlertar(MensajeNormal)("Reserva generada exitosamente");
+                new DelegadoAlertar(MensajeNormal)("Reserva generada exitosamente");
 
-                // Abre el formulario de registro de huesped
+                // Abre el formulario de registro de huesped y cierra el actual
+                Close();
+
                 FrmRegistroHuesped frmRegistroUsuario = new(reserva);
-                frmRegistroUsuario.Show();
-                Hide();
+                frmRegistroUsuario.ShowDialog();
             }
-            catch (Exception except)
+            catch (Exception ex)
             {
-                new DAlertar(MensajeError)(except.Message);
+                manejadorExcepciones.LanzarExcepcion(ex);
             }
         }
         #endregion
@@ -86,11 +96,7 @@ namespace FrmView
                     FechaEntrada = dtpCheckIn.Value,
                     FechaSalida = dtpCheckOut.Value,
                     FormaDePago = cmbFormaPago.SelectedItem.ToString(),
-                    Valor = CalcularValor(
-                        dtpCheckIn.Value,
-                        dtpCheckOut.Value,
-                        (EFormaDePago) cmbFormaPago.SelectedItem
-                        )
+                    Valor = CalcularValor(dtpCheckIn.Value, dtpCheckOut.Value, (EFormaDePago) cmbFormaPago.SelectedItem)
                 };
             }
             catch (DatoInvalidoException)

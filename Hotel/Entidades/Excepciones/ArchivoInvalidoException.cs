@@ -8,7 +8,7 @@ namespace Entidades.Excepciones
     [Serializable]
     public class ArchivoInvalidoException : Exception
     {
-        public ArchivoInvalidoException()
+        public ArchivoInvalidoException() : this("Error al importar el archivo")
         {
         }
 
@@ -17,10 +17,6 @@ namespace Entidades.Excepciones
         }
 
         public ArchivoInvalidoException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected ArchivoInvalidoException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

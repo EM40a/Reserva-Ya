@@ -22,7 +22,7 @@ namespace Entidades.BaseDeDatos
         /// <typeparam name="U">Es la propidad a filtrar</typeparam>
         /// <param name="propiedad"></param>
         /// <returns></returns>
-        public List<T> Obtener<T, U>(U propiedad) where T : class;
+        public T SeleccionarRegistro<T>(int id) where T : class, new();
 
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Entidades.BaseDeDatos
         /// </summary>
         /// <param name="registro">El registro a modificar</param>
         /// <returns>True si lo logro modificar, De lo contrario lanzara una excepcion</returns>
-        public bool ModificarRegistro<T>(T registro) where T : class, new();
+        public bool ActualizarRegistro<T>(int id) where T : class, new();
 
 
         /// <summary>
@@ -38,12 +38,12 @@ namespace Entidades.BaseDeDatos
         /// </summary>
         /// <param name="id">El parametro por el cual elimina</param>
         /// <returns>True si lo logro eliminar, De lo contrario lanzara una excepcion</returns>
-        public bool EliminarRegistro<T>(int id) where T : class, new();
+        public T? EliminarRegistro<T>(int id) where T : class, new();
 
         /// <summary>
         /// Obtiene todos los registros de la base de datos
         /// </summary>
         /// <returns>Una lista con todos los registros</returns>
-        public List<T> ObtenerTodos<T>() where T : class, new();
+        public List<T> SeleccionarTodos<T>() where T : class, new();
     }
 }

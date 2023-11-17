@@ -23,13 +23,10 @@ namespace Entidades.Modelos
         private DateTime _fechaSalida;
         private EFormaDePago _formaDePago;
 
-        /// <summary>
-        /// 
-        /// </summary>
         public Reserva()
         {
             _fechaEntrada = DateTime.Now;
-            _fechaSalida = _fechaEntrada.AddDays(1);
+            _fechaSalida = DateTime.Now.AddDays(1);
             _formaDePago = EFormaDePago.Efectivo;
         }
 
@@ -60,12 +57,12 @@ namespace Entidades.Modelos
         /// <summary>
         /// Verifica que la <see cref="FechaEntrada"/> sea valida
         /// </summary>
-        /// <exception cref="DatoInvalidoException"></exception>
-        public void SetFechaEntrada(DateTime fechaEntrada)
+        /// <exception cref="FechaInvalidaException"></exception>
+        private void SetFechaEntrada(DateTime fechaEntrada)
         {
-            if (fechaEntrada >= _fechaSalida)
+            if (fechaEntrada > fechaEntrada.AddYears(1))
             {
-                throw new DatoInvalidoException("La fecha de entrada no puede ser posterior a la fecha de salida");
+                throw new FechaInvalidaException("La fecha de entrada no puede ser posterior a un año");
             }
 
             _fechaEntrada = fechaEntrada;
@@ -74,12 +71,12 @@ namespace Entidades.Modelos
         /// <summary>
         /// Verifica que <see cref="FechaSalida"/> sea valida
         /// </summary>
-        /// <exception cref="DatoInvalidoException"></exception>
+        /// <exception cref="FechaInvalidaException"></exception>
         private void SetFechaSalida(DateTime fechaSalida)
         {
             if (fechaSalida <= _fechaEntrada)
             {
-                throw new DatoInvalidoException("La fecha de salida no puede ser anterior a la fecha de entrada");
+                throw new FechaInvalidaException("La fecha de salida no puede ser anterior a la fecha de entrada");
             }
 
             _fechaSalida = fechaSalida;

@@ -34,8 +34,8 @@
             btnExportar = new Button();
             sfdExportar = new SaveFileDialog();
             grpElegirRegistro = new GroupBox();
-            rdbHuespedes = new RadioButton();
             rdbReservas = new RadioButton();
+            rdbHuespedes = new RadioButton();
             txtBusqueda = new TextBox();
             btnEliminar = new Button();
             btnEditar = new Button();
@@ -110,46 +110,46 @@
             // 
             // grpElegirRegistro
             // 
-            grpElegirRegistro.Controls.Add(rdbHuespedes);
             grpElegirRegistro.Controls.Add(rdbReservas);
+            grpElegirRegistro.Controls.Add(rdbHuespedes);
             grpElegirRegistro.Location = new Point(18, 184);
             grpElegirRegistro.Name = "grpElegirRegistro";
             grpElegirRegistro.Size = new Size(227, 66);
             grpElegirRegistro.TabIndex = 2;
             grpElegirRegistro.TabStop = false;
             // 
-            // rdbHuespedes
-            // 
-            rdbHuespedes.AutoSize = true;
-            rdbHuespedes.Cursor = Cursors.Hand;
-            rdbHuespedes.Location = new Point(113, 26);
-            rdbHuespedes.Name = "rdbHuespedes";
-            rdbHuespedes.Size = new Size(103, 24);
-            rdbHuespedes.TabIndex = 4;
-            rdbHuespedes.Text = "Huespedes";
-            rdbHuespedes.UseVisualStyleBackColor = true;
-            rdbHuespedes.CheckedChanged += rdbHuespedes_CheckedChanged;
-            // 
             // rdbReservas
             // 
             rdbReservas.AutoSize = true;
-            rdbReservas.Checked = true;
             rdbReservas.Cursor = Cursors.Hand;
-            rdbReservas.Location = new Point(20, 26);
+            rdbReservas.Location = new Point(127, 26);
             rdbReservas.Name = "rdbReservas";
             rdbReservas.Size = new Size(87, 24);
-            rdbReservas.TabIndex = 3;
-            rdbReservas.TabStop = true;
+            rdbReservas.TabIndex = 4;
             rdbReservas.Text = "Reservas";
             rdbReservas.UseVisualStyleBackColor = true;
-            rdbReservas.CheckedChanged += rdbReservas_CheckedChanged;
+            rdbReservas.CheckedChanged += rdbHuespedes_CheckedChanged;
+            // 
+            // rdbHuespedes
+            // 
+            rdbHuespedes.AutoSize = true;
+            rdbHuespedes.Checked = true;
+            rdbHuespedes.Cursor = Cursors.Hand;
+            rdbHuespedes.Location = new Point(13, 26);
+            rdbHuespedes.Name = "rdbHuespedes";
+            rdbHuespedes.Size = new Size(103, 24);
+            rdbHuespedes.TabIndex = 3;
+            rdbHuespedes.TabStop = true;
+            rdbHuespedes.Text = "Huespedes";
+            rdbHuespedes.UseVisualStyleBackColor = true;
+            rdbHuespedes.CheckedChanged += rdbReservas_CheckedChanged;
             // 
             // txtBusqueda
             // 
             txtBusqueda.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             txtBusqueda.Location = new Point(710, 213);
             txtBusqueda.Name = "txtBusqueda";
-            txtBusqueda.PlaceholderText = " Buscar";
+            txtBusqueda.PlaceholderText = " Buscar por ID";
             txtBusqueda.Size = new Size(335, 34);
             txtBusqueda.TabIndex = 5;
             txtBusqueda.TextChanged += txtBusqueda_TextChanged;
@@ -179,7 +179,7 @@
             btnEditar.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
             btnEditar.ForeColor = Color.FromArgb(12, 138, 199);
             btnEditar.ImeMode = ImeMode.NoControl;
-            btnEditar.Location = new Point(274, 556);
+            btnEditar.Location = new Point(276, 556);
             btnEditar.Name = "btnEditar";
             btnEditar.Size = new Size(250, 56);
             btnEditar.TabIndex = 11;
@@ -189,7 +189,6 @@
             // 
             // ofdImportar
             // 
-            ofdImportar.FileName = "openFileDialog1";
             ofdImportar.Title = "Selecciona un archivo";
             // 
             // FrmBusqueda
@@ -227,8 +226,8 @@
         private Button btnExportar;
         private SaveFileDialog sfdExportar;
         private GroupBox grpElegirRegistro;
-        private RadioButton rdbHuespedes;
         private RadioButton rdbReservas;
+        private RadioButton rdbHuespedes;
         private TextBox txtBusqueda;
         private Button btnEliminar;
         private Button btnEditar;

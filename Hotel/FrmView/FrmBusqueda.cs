@@ -1,9 +1,11 @@
 ﻿using Entidades.Archivos;
 using Entidades.BaseDeDatos;
+using Entidades.Eventos;
 using Entidades.Excepciones;
 using Entidades.Modelos;
 using System.Data;
-using static FrmView.MessageBoxHelper;
+using System.Reflection;
+using static FrmView.ManejadorDeMensajes;
 
 namespace FrmView
 {
@@ -15,6 +17,8 @@ namespace FrmView
         private HotelContext gdb;
         private List<Reserva> reservas;
         private List<Huesped> huespedes;
+        private ManejarExcepcion manejarExcepcion;
+        private DelegadoAlertar mostrar;
 
         #region Form    
         public FrmBusqueda()
@@ -25,52 +29,19 @@ namespace FrmView
         private void FrmBusqueda_Load(object sender, EventArgs e)
         {
             gdb = new();
+            
+            manejarExcepcion = new();
+            manejarExcepcion.ExcepcionOcurre += ManejarExcepcion_ExcepcionOcurre;
+            
             CargarDatos();
         }
         #endregion
 
         #region Eventos
-        private void btnExportar_Click(object sender, EventArgs e)
+        private void ManejarExcepcion_ExcepcionOcurre(object sender, ExcepcionEventArgs e)
         {
-            try
-            {
-                if (rdbReservas.Checked)
-                {
-                    ExportarDatos(reservas);
-                }
-                else if (rdbHuespedes.Checked)
-                {
-                    ExportarDatos(huespedes);
-                }
-                new DAlertar(MensajeNormal)("Datos exportados exitosamente");
-            }
-            catch (ArchivoInvalidoException except)
-            {
-                new DAlertar(MensajeError)(except.Message);
-            }
-        }
-
-        private void btnImportar_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (rdbReservas.Checked)
-                {
-                    ImportarDatos<Reserva>();
-                }
-                else
-                {
-                    ImportarDatos<Huesped>();
-                }
-
-                CargarDatos();
-                new DAlertar(MensajeNormal)("Datos exportados correctamente");
-
-            }
-            catch (ArchivoInvalidoException except)
-            {
-                new DAlertar(MensajeError)(except.Message);
-            }
+            mostrar = new(MensajeError);
+            mostrar(e.Excepcion.Message);
         }
 
         private void rdbReservas_CheckedChanged(object sender, EventArgs e)
@@ -85,65 +56,152 @@ namespace FrmView
             CargarDatos();
         }
 
+        private void btnExportar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (rdbHuespedes.Checked)
+                {
+                    ExportarDatos(huespedes);
+                }
+                else if (rdbReservas.Checked)
+                {
+                    ExportarDatos(reservas);
+                }
+            }
+            catch (ArchivoInvalidoException ex)
+            {
+                manejarExcepcion.LanzarExcepcion(ex);
+            }
+        }
+
+        private void btnImportar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (rdbHuespedes.Checked)
+                {
+                    List<Huesped> huespedes = ImportarDatos<Huesped>();
+                    
+                    if (huespedes is not null)
+                    {
+                        gdb.AgregarRegistro(huespedes);
+                    }
+                }
+                else if (rdbReservas.Checked)
+                {
+                    List<Reserva> reservas = ImportarDatos<Reserva>();
+                    
+                    if (reservas is not null)
+                    {
+                        gdb.AgregarRegistro(reservas);
+                    }
+                }
+
+                mostrar = new(MensajeNormal);
+                mostrar("Datos importados correctamente");
+                CargarDatos();
+            }
+            catch (ArchivoInvalidoException ex)
+            {
+                manejarExcepcion.LanzarExcepcion(ex);
+            }
+        }
+
         private void txtBusqueda_TextChanged(object sender, EventArgs e)
         {
-            string filtro = txtBusqueda.Text.ToLower();
+            string filtro = txtBusqueda.Text;
+            List<object> registros = new();
 
-            // Realiza la búsqueda y filtra la lista de datos
-            if (rdbReservas.Checked)
+            if (int.TryParse(filtro, out int id))
             {
-                dgvHotel.DataSource = RealizarBusqueda(reservas, filtro);
+                if (rdbHuespedes.Checked)
+                {
+                    registros.Add(gdb.SeleccionarRegistro<Huesped>(id));
+                }
+                else
+                {
+                    registros.Add(gdb.SeleccionarRegistro<Reserva>(id));
+                }
+
+                dgvHotel.DataSource = registros;
             }
             else
             {
-                dgvHotel.DataSource = RealizarBusqueda(huespedes, filtro);
+                CargarDatos();
             }
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            //TODO
+            mostrar = new(MensajeAdvertencia);
+            DialogResult dialogResult = mostrar("¿Seguro que deseas eliminar el registro?");
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                try
+                {
+                    // Elimina el registro de la base de datos y actualiza la grilla
+                    if (rdbHuespedes.Checked)
+                    {
+                        Huesped? huesped = gdb.EliminarRegistro<Huesped>(CapturarIdRegistro());
+                        gdb.EliminarRegistro<Reserva>(huesped.IdReserva);
+                    }
+                    else
+                    {
+                        gdb.EliminarRegistro<Reserva>(CapturarIdRegistro());
+                    }
+                }
+                catch (BaseDeDatosException ex)
+                {
+                    manejarExcepcion.LanzarExcepcion(ex);
+                }
+                finally
+                {
+                    CargarDatos();
+                }
+            }
         }
 
         private void btnEditar_Click(object sender, EventArgs e)
         {
             // TODO
+            mostrar = new(MensajeNormal);
+            gdb.ActualizarRegistro<Huesped>(CapturarIdRegistro());
+            mostrar("Registro actualizado...");
         }
         #endregion
 
         #region Metodos
         /// <summary>
-        /// Realiza la búsqueda de los datos en la lista según el filtro recibido por parametro
-        /// </summary>
-        /// <typeparam name="T">El registro de la lista</typeparam>
-        /// <returns>La lista filtrada</returns>
-        private List<T> RealizarBusqueda<T>(List<T> datos, string filtro)
-        {
-            return datos
-                // Por cada elemento obtiene sus propiedades
-                .Where(e => e.GetType().GetProperties()
-                // Chequea que el valor de la propiedad contenga el filtro o devuelva false
-                .Any(p => p.GetValue(e)?.ToString().ToLower().Contains(filtro) ?? false))
-                .ToList(); // Convierte el resultado a una lista
-        }
-
-        /// <summary>
         /// Exporta los datos de la grilla a un archivo de texto en la ruta seleccionada a traves
         /// del <see cref="ManejadorDeArchivos{T}"/>
         /// </summary>
         /// <param name="registros">Una lista con los objetos a agregar</param>
+        /// <exception cref="ExtensionNoPermitidaException"></exception>
         /// <exception cref="ArchivoInvalidoException"></exception>
         private void ExportarDatos<T>(List<T> registros) where T : class, new()
         {
-            ManejadorDeArchivos<T> manejadorDeArchivos = new();
-            sfdExportar.FileName = $"Data-{typeof(T).Name}"; // Le da un nombre por defecto al archivo
-
-            if (sfdExportar.ShowDialog() == DialogResult.OK)
+            try
             {
-                manejadorDeArchivos.ExportarArchivo(sfdExportar.FileName, registros);
-            }
+                ManejadorDeArchivos<T> manejadorDeArchivos = new();
+                sfdExportar.FileName = $"Data-{typeof(T).Name}"; // Le da un nombre por defecto al archivo
 
-            throw new ArchivoInvalidoException("Operación cancelada");
+                if (sfdExportar.ShowDialog() == DialogResult.OK)
+                {
+                    mostrar = new(MensajeNormal);
+                    manejadorDeArchivos.ExportarArchivo(sfdExportar.FileName, registros);
+                    mostrar("Datos exportados exitosamente");
+                }
+            }
+            catch (ArgumentException)
+            {
+                throw new ArchivoInvalidoException("Nombre de archivo invalido");
+            }
+            catch (ArchivoInvalidoException)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -154,30 +212,41 @@ namespace FrmView
         /// <exception cref="ArchivoInvalidoException"></exception>
         private List<T>? ImportarDatos<T>() where T : class, new()
         {
-            ManejadorDeArchivos<T> manejadorDeArchivos = new();
-
-            if (ofdImportar.ShowDialog() == DialogResult.OK)
+            try
             {
-                return manejadorDeArchivos.ImportarArchivo<T>(ofdImportar.FileName);
-            }
+                ManejadorDeArchivos<T> manejadorDeArchivos = new();
 
-            throw new ArchivoInvalidoException("Operación cancelada");
+                if (ofdImportar.ShowDialog() == DialogResult.OK)
+                {
+                    return manejadorDeArchivos.ImportarArchivo<T>(ofdImportar.FileName);
+                }
+
+                return null;
+            }
+            catch (ArgumentException)
+            {
+                throw new ArchivoInvalidoException();
+            }
+            catch (ArchivoInvalidoException)
+            {
+                throw;
+            }
         }
 
         /// <summary>
         /// Llena un <see cref="DataGridView"/> con los datos de los registros 
-        /// de <see cref="Reserva"/> o <see cref="Huesped"/> segun el tipo seleccionado"/>
+        /// de <see cref="Reserva"/> o <see cref="Huesped"/> segun el tipo seleccionado
         /// </summary>
         private void MostrarDatos()
         {
-            if (rdbReservas.Checked)
-            {
-                dgvHotel.DataSource = reservas;
-            }
-
             if (rdbHuespedes.Checked)
             {
                 dgvHotel.DataSource = huespedes;
+            }
+
+            if (rdbReservas.Checked)
+            {
+                dgvHotel.DataSource = reservas;
             }
         }
 
@@ -190,6 +259,28 @@ namespace FrmView
             reservas = gdb.Reservas.ToList();
             huespedes = gdb.Huespedes.ToList();
             MostrarDatos();
+        }
+
+        /// <summary>
+        /// Captura el id del registro seleccionado en la <see cref="DataGridView"/>
+        /// </summary>
+        /// <returns>El Id del registro seleccionado o -1 en caso de error</returns>
+        private int CapturarIdRegistro()
+        {
+            // Si hay una celda seleccionada
+            if (dgvHotel.SelectedCells.Count > 0)
+            {
+                // Captura el id del registro seleccionado
+                DataGridViewRow filaSeleccionada = dgvHotel.Rows[dgvHotel.SelectedCells[0].RowIndex];
+                DataGridViewCell celdaId = filaSeleccionada.Cells["Id"];
+
+                if (celdaId is not null && celdaId.Value is not null)
+                {
+                    return (int) celdaId.Value;
+                }
+            }
+
+            return -1;
         }
         #endregion
     }

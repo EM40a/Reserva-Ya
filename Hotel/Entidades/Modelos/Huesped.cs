@@ -1,18 +1,41 @@
 ﻿using Entidades.Excepciones;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Entidades.Modelos
 {
     /// <summary>
     /// Clase que representa un <see cref="Huesped"/> del hotel
     /// </summary>
-    public sealed class Huesped
+    public class Huesped
     {
         private DateTime _fechaDeNacimiento;
+        private string _nombre;
+        private string _apellido;
 
         #region Propiedades
         public int Id { get; set; } // PK
-        public string Nombre { get; set; }
-        public string Apellido { get; set; }
+        public string Nombre 
+        { 
+            get => _nombre;
+            set 
+            {
+                if (ValidaCampoVacio(value))
+                {
+                    _nombre = value;
+                }
+            } 
+        } 
+        public string Apellido 
+        {
+            get => _apellido;
+            set 
+            {
+                if (ValidaCampoVacio(value))
+                {
+                    _apellido = value;
+                }
+            } 
+        } 
         public DateTime FechaDeNacimiento
         {
             get => _fechaDeNacimiento;
@@ -27,17 +50,20 @@ namespace Entidades.Modelos
         /// Valida que el <see cref="Huesped"/> sea mayor de edad
         /// </summary>
         /// <param name="fechaDeNacimiento">La fecha a validar</param>
-        /// <exception cref="DatoInvalidoException"></exception>
+        /// <exception cref="FechaInvalidaException"></exception>
         private void SetFechaDeNacimiento(DateTime fechaDeNacimiento)
         {
             if (!EsMayorDeEdad(fechaDeNacimiento))
             {
-                throw new DatoInvalidoException("Debe ser mayor de edad para hacer una reserva");
+                throw new FechaInvalidaException("Debe ser mayor de edad para hacer una reserva");
             }
 
             _fechaDeNacimiento = fechaDeNacimiento;
         }
 
+        /// <summary>
+        /// Devuelve true si el <see cref="Huesped"/> es mayor de edad
+        /// </summary>
         public static bool EsMayorDeEdad(DateTime fechaDeNacimiento)
         {
             DateTime fechaActual = DateTime.Now;
@@ -50,6 +76,21 @@ namespace Entidades.Modelos
 
             return edad >= 18;
         }
+
+        /// <summary>
+        /// Valida que el campo no este vacio o sea nulo
+        /// </summary>
+        /// <returns>True si el campo no se esta vacio o es nulo</returns>
+        /// <exception cref="DatoInvalidoException"></exception>
+        public static bool ValidaCampoVacio(string campo)
+        {
+            if (campo.IsNullOrEmpty())
+            {
+                throw new DatoInvalidoException("Dato requerido");
+            }
+            return true;
+        }
+
         #endregion
 
         #region Sobrecargas

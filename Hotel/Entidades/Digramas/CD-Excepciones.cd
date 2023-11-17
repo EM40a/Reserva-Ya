@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Entidades.Excepciones.FechaInvalidaException">
+    <Position X="1.75" Y="4" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Excepciones\FechaInvalidaException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Excepciones.ExtensionNoPermitidaException">
+    <Position X="5.25" Y="2.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Excepciones\ExtensionNoPermitidaException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Excepciones.DirectorioNoEncontradoException">
+    <Position X="5.25" Y="0.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Excepciones\DirectorioNoEncontradoException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Excepciones.DatoInvalidoException">
+    <Position X="1.75" Y="2.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Excepciones\DatoInvalidoException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Excepciones.BaseDeDatosException">
+    <Position X="5.25" Y="4" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Excepciones\BaseDeDatosException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Excepciones.ArchivoInvalidoException">
+    <Position X="1.75" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Excepciones\ArchivoInvalidoException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

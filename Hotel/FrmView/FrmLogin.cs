@@ -1,11 +1,14 @@
-﻿using Entidades.Excepciones;
+﻿using Entidades.BaseDeDatos;
+using Entidades.Eventos;
+using Entidades.Excepciones;
 using Entidades.Modelos;
-using static FrmView.MessageBoxHelper;
+using static FrmView.ManejadorDeMensajes;
 
 namespace FrmView
 {
     public partial class FrmLogin : Form
     {
+        private ManejarExcepcion manejadorExcepciones;
         private string key;
 
         #region Form
@@ -16,27 +19,32 @@ namespace FrmView
         private void FrmLogin_Load(object sender, EventArgs e)
         {
             key = "Admin";
+            manejadorExcepciones = new ManejarExcepcion();
+            manejadorExcepciones.ExcepcionOcurre += ManejarExcepcion;
         }
         #endregion
 
         #region Eventos
         private void btnIngresar_Click(object sender, EventArgs e)
         {
-            FrmMenuUsuario frmMenuUsuario = new();
-
             try
             {
                 if (DatosCorrectos())
                 {
-                    this.Hide();
-                    frmMenuUsuario.Show();
+                    Hide();
+                    FrmMenuUsuario frmMenu = new ();
+                    frmMenu.Show();
                 }
             }
-            catch (DatoInvalidoException except)
+            catch (DatoInvalidoException ex)
             {
-                DAlertar delegado = new(MensajeError);
-                delegado(except.Message);
+                manejadorExcepciones.LanzarExcepcion(ex);
             }
+        }
+
+        private void ManejarExcepcion(object sender, ExcepcionEventArgs e)
+        {
+            new DelegadoAlertar(MensajeError)(e.Excepcion.Message);
         }
         #endregion
 
@@ -50,12 +58,7 @@ namespace FrmView
             bool usuarioValido = txtUsuario.Text == key;
             bool claveValida = txtClave.Text == key;
 
-
-            if (!usuarioValido && !claveValida)
-            {
-                throw new DatoInvalidoException("Usuario o contraseña incorrecto/s");
-            }
-            else if (!usuarioValido)
+            if (!usuarioValido)
             {
                 throw new DatoInvalidoException("Usuario incorrecto");
             }

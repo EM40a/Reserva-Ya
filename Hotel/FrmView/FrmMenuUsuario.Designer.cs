@@ -163,6 +163,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Menu de Usuario";
             FormClosing += FrmMenuUsuario_FormClosing;
+            Load += FrmMenuUsuario_Load;
             pnlContainer.ResumeLayout(false);
             pnlMenu.ResumeLayout(false);
             pnlMenu.PerformLayout();
