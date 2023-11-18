@@ -18,7 +18,7 @@ namespace FrmView
         private void FrmMenuUsuario_Load(object sender, EventArgs e)
         {
             gdb = new();
-            gdb.CrearDataBase();
+            Task.Run(() => gdb.CrearDataBase());
         }
 
         private void FrmMenuUsuario_FormClosing(object sender, FormClosingEventArgs e)

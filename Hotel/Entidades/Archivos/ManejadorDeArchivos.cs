@@ -80,7 +80,7 @@ namespace Entidades.Archivos
             }
             catch(Exception)
             {
-                throw new ArchivoInvalidoException();
+                throw;
             }
         }
 

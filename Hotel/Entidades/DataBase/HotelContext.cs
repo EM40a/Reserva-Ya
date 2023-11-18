@@ -28,7 +28,11 @@ namespace Entidades.BaseDeDatos
                 Add(registro);
                 SaveChanges();
             }
-            catch
+            catch(DbUpdateException)
+            {
+                throw new BaseDeDatosException("No se puede agregar explicitamente un campo auto-generado");
+            }
+            catch (SqlException)
             {
                 throw new BaseDeDatosException("No se pudo agregar el registro");
             }
@@ -36,7 +40,7 @@ namespace Entidades.BaseDeDatos
 
         public void AgregarRegistro<T>(List<T> registros) where T : class, new()
         {
-            foreach (var registro in registros)
+            foreach (T registro in registros)
             {
                 AgregarRegistro(registro);
             }

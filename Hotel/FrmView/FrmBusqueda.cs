@@ -32,8 +32,8 @@ namespace FrmView
             
             manejarExcepcion = new();
             manejarExcepcion.ExcepcionOcurre += ManejarExcepcion_ExcepcionOcurre;
-            
-            CargarDatos();
+
+            Task.Run(ActualizarGrilla);
         }
         #endregion
 
@@ -44,16 +44,14 @@ namespace FrmView
             mostrar(e.Excepcion.Message);
         }
 
+        // Rellena la grilla segun el tipo de registro seleccionado
         private void rdbReservas_CheckedChanged(object sender, EventArgs e)
         {
-            // Rellena la grilla segun el tipo de registro seleccionado
-            CargarDatos();
+            ActualizarGrilla();
         }
-
         private void rdbHuespedes_CheckedChanged(object sender, EventArgs e)
         {
-            // Rellena la grilla segun el tipo de registro seleccionado
-            CargarDatos();
+            ActualizarGrilla();
         }
 
         private void btnExportar_Click(object sender, EventArgs e)
@@ -81,28 +79,27 @@ namespace FrmView
             {
                 if (rdbHuespedes.Checked)
                 {
-                    List<Huesped> huespedes = ImportarDatos<Huesped>();
-                    
-                    if (huespedes is not null)
+                    List<Huesped> nuevosHuespedes = ImportarDatos<Huesped>();
+
+                    if (nuevosHuespedes is not null)
                     {
-                        gdb.AgregarRegistro(huespedes);
+                        gdb.AgregarRegistro(nuevosHuespedes);
                     }
                 }
                 else if (rdbReservas.Checked)
                 {
-                    List<Reserva> reservas = ImportarDatos<Reserva>();
-                    
-                    if (reservas is not null)
+                    List<Reserva> nuevasReservas = ImportarDatos<Reserva>();
+                    if (nuevasReservas is not null)
                     {
-                        gdb.AgregarRegistro(reservas);
-                    }
+                        gdb.AgregarRegistro(nuevasReservas);
+                    }   
                 }
 
                 mostrar = new(MensajeNormal);
                 mostrar("Datos importados correctamente");
-                CargarDatos();
+                ActualizarGrilla();
             }
-            catch (ArchivoInvalidoException ex)
+            catch (Exception ex)
             {
                 manejarExcepcion.LanzarExcepcion(ex);
             }
@@ -128,7 +125,7 @@ namespace FrmView
             }
             else
             {
-                CargarDatos();
+                ActualizarGrilla();
             }
         }
 
@@ -158,7 +155,7 @@ namespace FrmView
                 }
                 finally
                 {
-                    CargarDatos();
+                    ActualizarGrilla();
                 }
             }
         }
@@ -173,6 +170,43 @@ namespace FrmView
         #endregion
 
         #region Metodos
+        /// <summary>
+        /// Llena un <see cref="DataGridView"/> con los datos de los registros 
+        /// de <see cref="Reserva"/> o <see cref="Huesped"/> segun el tipo seleccionado 
+        /// previamente consultando a la base de datos
+        /// </summary>
+        private void ActualizarGrilla()
+        {
+            CargarDatos();
+            
+            if (rdbHuespedes.Checked)
+            {
+                dgvHotel.DataSource = huespedes;
+            }
+
+            else if (rdbReservas.Checked)
+            {
+                dgvHotel.DataSource = reservas;
+            }
+        }
+
+        /// <summary>
+        /// Carga los datos de las tablas al manejador de contexto <see cref="HotelContext"/> 
+        /// </summary>
+        private void CargarDatos()
+        {
+            // Si requiere invocar el hilo principal
+            if (InvokeRequired)
+            {
+                BeginInvoke(ActualizarGrilla);
+            }
+            else
+            {
+                reservas = gdb.Reservas.ToList();
+                huespedes = gdb.Huespedes.ToList();
+            }
+        }
+
         /// <summary>
         /// Exporta los datos de la grilla a un archivo de texto en la ruta seleccionada a traves
         /// del <see cref="ManejadorDeArchivos{T}"/>
@@ -231,34 +265,6 @@ namespace FrmView
             {
                 throw;
             }
-        }
-
-        /// <summary>
-        /// Llena un <see cref="DataGridView"/> con los datos de los registros 
-        /// de <see cref="Reserva"/> o <see cref="Huesped"/> segun el tipo seleccionado
-        /// </summary>
-        private void MostrarDatos()
-        {
-            if (rdbHuespedes.Checked)
-            {
-                dgvHotel.DataSource = huespedes;
-            }
-
-            if (rdbReservas.Checked)
-            {
-                dgvHotel.DataSource = reservas;
-            }
-        }
-
-        /// <summary>
-        /// Carga los datos de las tablas al manejador de contexto <see cref="HotelContext"/> 
-        /// y muestra los datos en el <see cref="DataGridView"/>
-        /// </summary>
-        private void CargarDatos()
-        {
-            reservas = gdb.Reservas.ToList();
-            huespedes = gdb.Huespedes.ToList();
-            MostrarDatos();
         }
 
         /// <summary>

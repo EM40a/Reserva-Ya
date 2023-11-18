@@ -174,7 +174,7 @@
             // 
             btnEditar.BackColor = Color.White;
             btnEditar.Cursor = Cursors.Hand;
-            btnEditar.Enabled = false;
+            btnEditar.Enabled = true;
             btnEditar.FlatStyle = FlatStyle.Flat;
             btnEditar.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
             btnEditar.ForeColor = Color.FromArgb(12, 138, 199);

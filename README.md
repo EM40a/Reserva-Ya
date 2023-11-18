@@ -13,7 +13,7 @@ Se utilizarán los contenidos vistos en clase en la segunda parte de la materia:
 - [Archivos y Serialización](Hotel/Entidades/Archivos/ManejadorDeArchivos.cs)
 - [SQL y Conexión a Bases de Datos](Hotel/Entidades/DataBase/HotelContext.cs)
 - [Delegados y Expresiones Lambda](Hotel/FrmView/MessageBoxHelper.cs)
-- Programación multi-hilo y Concurrencia
+- [Programación multi-hilo y Concurrencia](Hotel/FrmView/FrmBusqueda.cs)
 - [Eventos](Hotel/Entidades/Eventos/ManejarExcepcion.cs)
 - [Métodos de Extension](Hotel/Entidades/DataBase/ComandosExtended.cs)
 
@@ -90,6 +90,46 @@ Hay excepciones para los siguientes casos:
 - **Extension no permitida**: Se lanza cuando la extensión del archivo no es ni **JSON** ni **XML**.
 
 Ambas heredan de `ArchivoInvalidoException`.
+
+### Hilos y Concurrencia
+
+El sistema cuenta con un **manejador de hilos** que se encarga de realizar las consultas a la base de datos en un hilo aparte para no bloquear la interfaz del usuario.
+
+Se implementa en `FrmBusqueda` para que la búsqueda de los registros se realice en un hilo aparte.
+
+```c#
+private void CargarDatos()
+{
+    if (InvokeRequired)
+    {
+        BeginInvoke(ActualizarGrilla);
+    }
+    else
+    {
+        reservas = gdb.Reservas.ToList();
+        huespedes = gdb.Huespedes.ToList();
+    }
+}
+```
+
+Si requiere invocar el hilo principal para actualizar la grilla, se llama al método `BeginInvoke` que se encarga de llamar al método `ActualizarGrilla` en el hilo principal.
+
+```c#
+private void ActualizarGrilla()
+{
+    CargarDatos();
+    
+    if (rdbHuespedes.Checked)
+    {
+        dgvHotel.DataSource = huespedes;
+    }
+
+    else if (rdbReservas.Checked)
+    {
+        dgvHotel.DataSource = reservas;
+    }
+}
+```
 
 ### Eventos
 
