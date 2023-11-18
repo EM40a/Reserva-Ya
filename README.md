@@ -2,7 +2,11 @@
 
 El segundo ejercicio integrador de **Laboratorio II** es un sistema de atención al público en `.NET` y `C#` que se encargará de gestionar las reservas de un hotel.
 
-El sistema debe permitir **agregar** tanto las `reservas` como sus respectivos `huéspedes` a la base de datos del hotel a través de un formulario o importando los datos desde un archivo **JSON** o **XML**. Ademas, debe permitir **modificar**, **eliminar** y **buscar** a través de un buscador.
+<img alt="Formulario de Registro de datos" src="src/PreviewRegistro.gif" width="100%">
+
+El sistema debe permitir **agregar** tanto las `reservas` como sus respectivos `huéspedes` a la base de datos del hotel a través de un formulario o importando los datos desde un archivo **JSON** o **XML**. Ademas, debe permitir **modificar**, **eliminar** y **buscar** registro. Esto ultimo lo hace a través de un buscador por **ID**.
+
+<img alt="Formulario de Búsquedas" src="src/PreviewBuscador.gif" width="100%">
 
 Se utilizarán los contenidos vistos en clase en la segunda parte de la materia:
 
@@ -29,7 +33,7 @@ La clase `Huesped` representa a una persona que se hospeda en el hotel. Esta cla
 
 La clase `Reserva` representa a una reserva que se realizó en el hotel. Esta clase contiene los datos de la reserva, como la fecha de ingreso y egreso, el numero de la habitación (Id), etc. Ademas, cuenta con un enumerado `EFormaDePago` que será utilizado para indicar la forma de pago de la misma.
 
-![Modelos](img/CD-Modelos.png)
+![Modelos](src/CD-Modelos.png)
 
 De momento solo hay validaciones para las fechas ingresadas y que los datos no sean nulos o vacíos, pero se pueden agregar más validaciones en el futuro.  
 
@@ -48,13 +52,13 @@ Implementa la interfaz `IComandosDb` que contiene los métodos que se utilizará
 
 También cuenta con una clase `ComandosExtended` que contiene métodos de extensión para la clase `HotelContext` que se encargan de realizar consultas más complejas a la base de datos.
 
-![Base de Datos](img/CD-BaseDeDatos.png)
+![Base de Datos](src/CD-BaseDeDatos.png)
 
 ### Archivos
 
 El sistema cuenta con un `ManejadorDeArchivos` que se encarga de guardar y leer los datos de las reservas y los huéspedes en un archivo **JSON** o **XML**.
 
-![Archivos](img/CD-Archivos.png)
+![Archivos](src/CD-Archivos.png)
 
 La clase cuenta con clases tanto para **serializar** como **deserializar** los datos de los registros que son llamados en los métodos `ExportarArchivo` e `ImportarArchivo` respectivamente según el formato de archivo elegido.
 
@@ -80,7 +84,7 @@ Próximamente se agregara la opción de exportar los datos a un archivo **CSV**.
 
 El sistema cuenta con una serie de excepciones que se lanzan en caso de que ocurra algún error en el programa. Estas excepciones se encuentran en el **namespace [Excepciones](Hotel/Entidades/Excepciones)**.
 
-![Excepciones](img/CD-Excepciones.png)
+![Excepciones](src/CD-Excepciones.png)
 
 Hay excepciones para los siguientes casos:
 
@@ -135,7 +139,7 @@ private void ActualizarGrilla()
 
 El sistema cuenta con un **manejador de eventos** que se encarga de manejar las excepciones que ocurren durante el funcionamiento del programa.
 
-![Eventos](img/CD-Eventos.png)
+![Eventos](src/CD-Eventos.png)
 
 La clase `ManejarExcepcion`, que será utilizada en los formularios, tiene un método `LanzarExcepcion` que se encarga lanzar el evento con la excepción llamando a `OnExcepcionOcurre` que es la encargada en **invocar** al evento.
 
@@ -143,12 +147,9 @@ La clase `ManejarExcepcion`, que será utilizada en los formularios, tiene un m�
 
 ---
 
-## Anexos
+### Anexos
 
-👉 [Data Grid View](https://learn.microsoft.com/es-es/dotnet/api/system.windows.forms.datagridview?view=windowsdesktop-7.0)
-
-👉 [Apuntes - Programación II y Laboratorio II](https://codeutnfra.github.io/programacion_2_laboratorio_2_apuntes/docs/clases/programa/)
-
-👉 [Save File Dialog](https://learn.microsoft.com/es-es/dotnet/api/system.windows.forms.savefiledialog?view=windowsdesktop-7.0)
-
-👉 [Trabajando con Entity Framework y SQL SERVER by Alejandro Bongioanni](https://www.youtube.com/watch?v=Exz5L0CqFp0)
+- [📄 Data Grid View](https://learn.microsoft.com/es-es/dotnet/api/system.windows.forms.datagridview?view=windowsdesktop-7.0)
+- [📄 Apuntes - Programación II y Laboratorio II](https://codeutnfra.github.io/programacion_2_laboratorio_2_apuntes/docs/clases/programa/)
+- [📄 Save File Dialog](https://learn.microsoft.com/es-es/dotnet/api/system.windows.forms.savefiledialog?view=windowsdesktop-7.0)
+- [🎬 Trabajando con Entity Framework y SQL SERVER by Alejandro Bongioanni](https://www.youtube.com/watch?v=Exz5L0CqFp0)
