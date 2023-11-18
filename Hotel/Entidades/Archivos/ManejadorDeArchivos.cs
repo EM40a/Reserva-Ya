@@ -80,7 +80,7 @@ namespace Entidades.Archivos
             }
             catch(Exception)
             {
-                throw;
+                throw new ArchivoInvalidoException("Error al importar");
             }
         }
 
