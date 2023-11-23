@@ -106,7 +106,7 @@ namespace FrmView
                 {
                     Nombre = txtNombre.Text,
                     Apellido = txtApellido.Text,
-                    FechaDeNacimiento = dtpFechaDeNacimiento.Value,
+                    FechaDeNacimiento = dtpFechaDeNacimiento.Value.Date,
                     IdReserva = ReservaAsociada.Id,
                     Telefono = txtTelefono.Text
                 };

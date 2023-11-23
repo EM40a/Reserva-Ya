@@ -93,8 +93,8 @@ namespace FrmView
             {
                 return new Reserva()
                 {
-                    FechaEntrada = dtpCheckIn.Value,
-                    FechaSalida = dtpCheckOut.Value,
+                    FechaEntrada = dtpCheckIn.Value.Date,
+                    FechaSalida = dtpCheckOut.Value.Date,
                     FormaDePago = cmbFormaPago.SelectedItem.ToString(),
                     Valor = CalcularValor(dtpCheckIn.Value, dtpCheckOut.Value, (EFormaDePago) cmbFormaPago.SelectedItem)
                 };

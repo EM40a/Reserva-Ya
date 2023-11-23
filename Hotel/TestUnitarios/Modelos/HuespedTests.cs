@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Entidades.Excepciones;
+using Entidades.Modelos;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Entidades.Modelos.Tests
 {
@@ -36,15 +38,46 @@ namespace Entidades.Modelos.Tests
         public void EsMayorDeEdad_CuandoEdadEsMenor18_DeberiaRetronarFalse
             (string fechaDeNacimiento, bool valorEsperado)
         {
-            //Arrange: Preparar el escenario de la prueba
+            //? Arrange: Preparar el escenario de la prueba
             bool resultado;
             DateTime dateTest = DateTime.Parse(fechaDeNacimiento);
 
-            //Act: Ejecutar el metodo a probar
+            //? Act: Ejecutar el metodo a probar
             resultado = Huesped.EsMayorDeEdad(dateTest);
 
-            //Assert: Verificar el resultado
+            //? Assert: Verificar el resultado
             Assert.AreEqual(valorEsperado, resultado);
+        }
+
+        [TestMethod()]
+        [DataRow("Juan", true)]
+        [DataRow("Juan Carlos", true)]
+        public void ValidaCampoVacio_CuandoPasoValoresValidos_DeberiaRetornarTrue
+            (string campo, bool valorEsperado)
+        {
+            //? Arrange: Preparar el escenario de la prueba
+            bool resultado;
+
+            //? Act: Ejecutar el metodo a probar
+            resultado = Huesped.ValidaCampoVacio(campo);
+
+            //? Assert: Verificar el resultado
+            Assert.AreEqual(valorEsperado, resultado);
+        }
+
+        [TestMethod()]
+        [DataRow(null)]
+        [DataRow("")]
+        public void ValidaCampoVacio_CuandoPasoValoresInvalidos_DeberiaLanzarUnaExcepcion(string campo)
+        {
+            //? Arrange: Preparar el escenario de la prueba
+            Action action;
+
+            //? Act: Ejecutar el metodo a probar
+            action = () => Huesped.ValidaCampoVacio(campo);
+            
+            //? Assert: Verificar el resultado
+            Assert.ThrowsException<DatoInvalidoException>(action);
         }
     }
 }
