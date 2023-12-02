@@ -36,6 +36,10 @@ namespace Entidades.Archivos
                         SerializarXml(path, elementos);
                         break;
 
+                    case "csv":
+                        SerializarCsv(path, elementos);
+                        break;
+
                     default:
                         throw new ExtensionNoPermitidaException();
                 }
@@ -69,6 +73,9 @@ namespace Entidades.Archivos
 
                     case "xml":
                         return DeserializarXml<T>(directorio);
+
+                    case "csv":
+                        return DeserializarCsv<T>(directorio);
 
                     default:
                         throw new ExtensionNoPermitidaException();
@@ -107,7 +114,7 @@ namespace Entidades.Archivos
         /// <returns>Una <see cref="List{T}"/> con los elementos deserializados</returns>
         private List<T>? DeserializarJson<T>(string path)
         {
-            using (StreamReader reader = new(path))
+            using (StreamReader reader = new(path)) 
             {
                 string strJson = reader.ReadToEnd();
 
@@ -138,6 +145,89 @@ namespace Entidades.Archivos
                 XmlSerializer serializer = new(typeof(T));
                 return serializer.Deserialize(reader) as List<T>;
             }
+        }
+        /// <summary>
+        /// Serializa una lista de objetos en formato CSV y guarda el resultado en un archivo en la ruta especificada.
+        /// </summary>
+        /// <param name="path">Ruta del archivo CSV.</param>
+        /// <param name="elementos">Lista de objetos a serializar.</param>
+        private void SerializarCsv(string path, List<T> elementos)
+        {
+            using (StreamWriter sw = new(path))
+            {
+                // Encabezado CSV (usando propiedades de la primera instancia de T)
+                var encabezado = string.Join(",", typeof(T).GetProperties().Select(p => p.Name));
+                sw.WriteLine(encabezado);
+
+                // Escribir cada línea de datos en el archivo
+                foreach (var elemento in elementos)
+                {
+                    // Valores CSV
+                    var valores = string.Join(",", typeof(T).GetProperties().Select(p => p.GetValue(elemento)?.ToString()));
+                    sw.WriteLine(valores);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Deserializa un archivo CSV ubicado en la ruta especificada y devuelve una lista de objetos del tipo especificado.
+        /// </summary>
+        /// <typeparam name="T">Tipo de objeto a deserializar.</typeparam>
+        /// <param name="path">Ruta del archivo CSV.</param>
+        /// <returns>Una lista de objetos del tipo especificado con datos del archivo CSV.</returns>
+        /// <exception cref="ArchivoInvalidoException">Se lanza cuando ocurre un error durante la deserialización del archivo.</exception>
+        private List<T>? DeserializarCsv<T>(string path)
+        {
+            try
+            {
+                using (StreamReader sr = new(path))
+                {
+                    List<T> elementos = new();
+                    string[] encabezados = sr.ReadLine()?.Split(',');
+
+                    while (sr.Peek() >= 0)
+                    {
+                        string[] valores = sr.ReadLine()?.Split(',');
+
+                        if (valores != null && valores.Length == encabezados?.Length)
+                        {
+                            T elemento = ConstruirElementoDesdeCsv<T>(encabezados, valores);
+                            elementos.Add(elemento);
+                        }
+                    }
+
+                    return elementos;
+                }
+            }
+            catch (Exception)
+            {
+                throw new ArchivoInvalidoException("Error al importar el archivo CSV");
+            }
+        }
+
+
+        /// <summary>
+        /// Construye un objeto del tipo especificado desde un conjunto de encabezados y valores provenientes de un archivo CSV.
+        /// </summary>
+        /// <typeparam name="T">Tipo de objeto a construir.</typeparam>
+        /// <param name="encabezados">Array que contiene los encabezados del CSV.</param>
+        /// <param name="valores">Array que contiene los valores asociados a los encabezados en una línea del CSV.</param>
+        /// <returns>Un objeto del tipo especificado con propiedades asignadas según los encabezados y valores proporcionados.</returns>
+        private T ConstruirElementoDesdeCsv<T>(string[] encabezados, string[] valores)
+        {
+            T elemento = Activator.CreateInstance<T>();
+
+            for (int i = 0; i < encabezados.Length; i++)
+            {
+                var propiedad = typeof(T).GetProperty(encabezados[i].Trim());
+
+                if (propiedad != null)
+                {
+                    propiedad.SetValue(elemento, Convert.ChangeType(valores[i]?.Trim(), propiedad.PropertyType));
+                }
+            }
+
+            return elemento;
         }
     }
 }

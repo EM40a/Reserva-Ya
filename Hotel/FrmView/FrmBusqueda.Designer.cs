@@ -70,6 +70,8 @@
             dgvHotel.RowTemplate.Height = 29;
             dgvHotel.Size = new Size(1027, 294);
             dgvHotel.TabIndex = 6;
+            dgvHotel.CellClick += dgvHotel_CellClick;
+            dgvHotel.DataError += dgvHotel_DataError;
             // 
             // btnImportar
             // 
@@ -105,7 +107,7 @@
             // 
             // sfdExportar
             // 
-            sfdExportar.Filter = "Archivos JSON (*.json)|*.json|Archivos XML (*.xml)|*.xml";
+            sfdExportar.Filter = "Archivos JSON (*.json)|*.json|Archivos XML (*.xml)|*.xml|Archivos CSV (*.csv)|*.csv";
             sfdExportar.Title = "Guardar archvo";
             // 
             // grpElegirRegistro
@@ -174,7 +176,6 @@
             // 
             btnEditar.BackColor = Color.White;
             btnEditar.Cursor = Cursors.Hand;
-            btnEditar.Enabled = true;
             btnEditar.FlatStyle = FlatStyle.Flat;
             btnEditar.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
             btnEditar.ForeColor = Color.FromArgb(12, 138, 199);

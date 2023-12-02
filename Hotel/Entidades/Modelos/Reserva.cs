@@ -1,4 +1,4 @@
-﻿using Entidades.Excepciones;
+﻿ using Entidades.Excepciones;
 using System.Text;
 
 namespace Entidades.Modelos

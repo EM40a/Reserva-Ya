@@ -21,6 +21,12 @@ Se utilizarán los contenidos vistos en clase en la segunda parte de la materia:
 - [Eventos](Hotel/Entidades/Eventos/ManejarExcepcion.cs)
 - [Métodos de Extension](Hotel/Entidades/DataBase/ComandosExtended.cs)
 
+## Antes de empezar
+
+Para poder utilizar el sistema, es necesario tener instalado **SQL Server** y **SQL Server Management Studio**.
+
+Tanto la clave como el usuario de al ingresar el formulario de registro son **Admin**.
+
 ## Diagrama de Clases
 
 Las clases del sistema se encuentran en los siguientes diagramas: 
@@ -73,12 +79,16 @@ switch (extension.TrimStart('.').ToLower())
         SerializarXml(path, elementos);
         break;
 
+    case "csv":
+        SerializarCsv(path, elementos);
+        break;
+
     default:
         throw new ExtensionNoPermitidaException();
 }
 ```
 
-Próximamente se agregara la opción de exportar los datos a un archivo **CSV**. 
+Próximamente se agregara la opción de exportar los datos a un archivo **Excel (xlsx)**. 
 
 ### Excepciones
 

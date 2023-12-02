@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Data.SqlClient;
 using Microsoft.Identity.Client;
+using System.Reflection;
 
 namespace Entidades.BaseDeDatos
 {
@@ -71,14 +72,22 @@ namespace Entidades.BaseDeDatos
             }
         }
 
-        public bool ActualizarRegistro<T>(int id) where T : class, new()
+        public bool ActualizarRegistro<T>(int id, int columnIndex, object nuevoValor) where T : class, new()
         {
             try
             {
                 T registro = SeleccionarRegistro<T>(id);
+
+                PropertyInfo propiedad = typeof(T).GetProperties()[columnIndex];
+                propiedad.SetValue(registro, Convert.ChangeType(nuevoValor, propiedad.PropertyType));
+
                 Update(registro);
                 SaveChanges();
                 return true;
+            }
+            catch (FormatException)
+            {
+                throw new BaseDeDatosException("Formato incorrecto");
             }
             catch (Exception)
             {
@@ -122,6 +131,15 @@ namespace Entidades.BaseDeDatos
                 "Trusted_Connection=True;" +
                 "TrustServerCertificate=Yes"
                 );
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Huesped>()
+                .Property(e => e.FechaDeNacimiento)
+                .HasColumnType("date");
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

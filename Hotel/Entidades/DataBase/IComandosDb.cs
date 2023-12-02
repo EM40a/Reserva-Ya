@@ -30,8 +30,7 @@ namespace Entidades.BaseDeDatos
         /// </summary>
         /// <param name="registro">El registro a modificar</param>
         /// <returns>True si lo logro modificar, De lo contrario lanzara una excepcion</returns>
-        public bool ActualizarRegistro<T>(int id) where T : class, new();
-
+        public bool ActualizarRegistro<T>(int id, int columnIndex, object nuevoValor) where T : class, new();
 
         /// <summary>
         /// Elimina un registro de la base datos

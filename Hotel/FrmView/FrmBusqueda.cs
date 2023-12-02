@@ -5,6 +5,7 @@ using Entidades.Excepciones;
 using Entidades.Modelos;
 using System.Data;
 using System.Reflection;
+using System.Windows.Forms;
 using static FrmView.ManejadorDeMensajes;
 
 namespace FrmView
@@ -29,10 +30,12 @@ namespace FrmView
         private void FrmBusqueda_Load(object sender, EventArgs e)
         {
             gdb = new();
-            
+
             manejarExcepcion = new();
             manejarExcepcion.ExcepcionOcurre += ManejarExcepcion_ExcepcionOcurre;
 
+            ofdImportar.Filter = "Archivos JSON (*.json)|*.json|Archivos XML (*.xml)|*.xml|Archivos CSV (*.csv)|*.csv";
+            sfdExportar.Filter = "Archivos JSON (*.json)|*.json|Archivos XML (*.xml)|*.xml|Archivos CSV (*.csv)|*.csv";
             Task.Run(ActualizarGrilla);
         }
         #endregion
@@ -92,12 +95,8 @@ namespace FrmView
                     if (nuevasReservas is not null)
                     {
                         gdb.AgregarRegistro(nuevasReservas);
-                    }   
+                    }
                 }
-
-                mostrar = new(MensajeNormal);
-                mostrar("Datos importados correctamente");
-                ActualizarGrilla();
             }
             catch (Exception ex)
             {
@@ -107,25 +106,16 @@ namespace FrmView
 
         private void txtBusqueda_TextChanged(object sender, EventArgs e)
         {
-            string filtro = txtBusqueda.Text;
-            List<object> registros = new();
+            string filtro = txtBusqueda.Text.ToLower();
 
-            if (int.TryParse(filtro, out int id))
+            // Realiza la búsqueda y filtra la lista de datos
+            if (rdbReservas.Checked)
             {
-                if (rdbHuespedes.Checked)
-                {
-                    registros.Add(gdb.SeleccionarRegistro<Huesped>(id));
-                }
-                else
-                {
-                    registros.Add(gdb.SeleccionarRegistro<Reserva>(id));
-                }
-
-                dgvHotel.DataSource = registros;
+                dgvHotel.DataSource = RealizarBusqueda(reservas, filtro);
             }
             else
             {
-                ActualizarGrilla();
+                dgvHotel.DataSource = RealizarBusqueda(huespedes, filtro);
             }
         }
 
@@ -162,14 +152,71 @@ namespace FrmView
 
         private void btnEditar_Click(object sender, EventArgs e)
         {
-            // TODO
-            mostrar = new(MensajeNormal);
-            gdb.ActualizarRegistro<Huesped>(CapturarIdRegistro());
-            mostrar("Registro actualizado...");
+            dgvHotel.ReadOnly = false;
+        }
+
+        private void dgvHotel_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && dgvHotel.Columns[e.ColumnIndex].ReadOnly == false)
+            {
+                // Habilita la edición de la celda seleccionada
+                dgvHotel.BeginEdit(true);
+
+                object nuevoValor = dgvHotel.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                ActualizarRegistro(e.ColumnIndex, nuevoValor);
+            }
+        }
+
+        private void dgvHotel_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            if (e.Exception is FormatException)
+            {
+                manejarExcepcion.LanzarExcepcion(new("Formato incorrecto"));
+            }
+
+            // Cancela la propagación de la excepción
+            e.Cancel = true;
         }
         #endregion
 
         #region Metodos
+        private void ActualizarRegistro(int columnIndex, object nuevoValor)
+        {
+            try
+            {
+                int id = CapturarIdRegistro();
+
+                if (rdbHuespedes.Checked)
+                {
+                    gdb.ActualizarRegistro<Huesped>(id, columnIndex, nuevoValor);
+                }
+                else
+                {
+                    gdb.ActualizarRegistro<Reserva>(id, columnIndex, nuevoValor);
+                }
+            }
+            catch (BaseDeDatosException ex)
+            {
+                manejarExcepcion.LanzarExcepcion(ex);
+            }
+        }
+
+        /// <summary>
+        /// Realiza la búsqueda de los datos en la lista según el filtro recibido por parametro
+        /// </summary>
+        /// <typeparam name="T">El registro de la lista</typeparam>
+        /// <returns>La lista filtrada</returns>
+        private List<T> RealizarBusqueda<T>(List<T> datos, string filtro)
+        {
+            return datos
+                // Por cada elemento obtiene sus propiedades
+                .Where(e => e.GetType().GetProperties()
+                // Chequea que el valor de la propiedad contenga el filtro o devuelva false
+                .Any(p => p.GetValue(e)?.ToString().ToLower().Contains(filtro) ?? false))
+                .ToList(); // Convierte el resultado a una lista
+        }
+
+
         /// <summary>
         /// Llena un <see cref="DataGridView"/> con los datos de los registros 
         /// de <see cref="Reserva"/> o <see cref="Huesped"/> segun el tipo seleccionado 
@@ -178,7 +225,7 @@ namespace FrmView
         private void ActualizarGrilla()
         {
             CargarDatos();
-            
+
             if (rdbHuespedes.Checked)
             {
                 dgvHotel.DataSource = huespedes;
@@ -252,6 +299,9 @@ namespace FrmView
 
                 if (ofdImportar.ShowDialog() == DialogResult.OK)
                 {
+                    mostrar = new(MensajeNormal);
+                    mostrar("Datos importados correctamente");
+                    ActualizarGrilla();
                     return manejadorDeArchivos.ImportarArchivo<T>(ofdImportar.FileName);
                 }
 
@@ -282,7 +332,7 @@ namespace FrmView
 
                 if (celdaId is not null && celdaId.Value is not null)
                 {
-                    return (int) celdaId.Value;
+                    return (int)celdaId.Value;
                 }
             }
 
